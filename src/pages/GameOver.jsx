@@ -1,13 +1,23 @@
 import { useState, useEffect } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { getRandomWord } from '../lib/words'
 import { useGame } from '../context/GameContext'
+
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = ''
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return code
+}
 
 export default function GameOver() {
   const { roomCode } = useParams()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { clearSession } = useGame()
+  const { saveSession, clearSession } = useGame()
   
   const [room, setRoom] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -35,8 +45,42 @@ export default function GameOver() {
     loadRoom()
   }, [roomCode])
 
-  const handlePlayAgain = () => {
-    navigate('/')
+  const handlePlayAgain = async () => {
+    // Get the current player info from localStorage
+    const stored = localStorage.getItem('palabrea_session')
+    if (!stored) {
+      navigate('/')
+      return
+    }
+
+    try {
+      const session = JSON.parse(stored)
+      const playerName = session.playerName
+      const newCode = generateCode()
+      const currentWord = getRandomWord()
+
+      // Create a new room
+      const { data, error } = await supabase
+        .from('rooms')
+        .insert({ 
+          code: newCode, 
+          status: 'waiting', 
+          player1_name: playerName 
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      // Save session with new room
+      saveSession(playerName, newCode, 'player1')
+      
+      // Navigate to new room
+      navigate(`/game/${newCode}?player=player1`)
+    } catch (e) {
+      console.error('Error creating new game:', e)
+      navigate('/')
+    }
   }
 
   const handleExit = () => {
