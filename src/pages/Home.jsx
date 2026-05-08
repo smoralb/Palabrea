@@ -230,14 +230,12 @@ export default function Home() {
             <span>Esperando a que se una un jugador...</span>
           </div>
           
-          {cancelTimer && (
-            <button
-              onClick={handleCancelRoom}
-              className="mt-6 w-full px-4 py-3 bg-red-700 hover:bg-red-600 rounded-lg transition-colors"
-            >
-              Cancelar sala
-            </button>
-          )}
+          <button
+            onClick={handleCancelRoom}
+            className="mt-6 w-full px-4 py-3 bg-red-700 hover:bg-red-600 rounded-lg transition-colors"
+          >
+            Cancelar sala
+          </button>
         </div>
       </div>
     )
