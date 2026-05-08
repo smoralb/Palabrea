@@ -11,7 +11,6 @@ export default function GameOver() {
   
   const [room, setRoom] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [updated, setUpdated] = useState(false)
 
   const player = searchParams.get('player')
   const isWinner = room?.winner === (player === 'player1' ? room?.player1_name : room?.player2_name)
@@ -35,32 +34,6 @@ export default function GameOver() {
 
     loadRoom()
   }, [roomCode])
-
-  useEffect(() => {
-    async function updateScore() {
-      if (!room || updated) return
-
-      const winnerIsP1 = room.winner === room.player1_name
-      
-      if ((winnerIsP1 && player === 'player1') || (!winnerIsP1 && player === 'player2')) {
-        setUpdated(true)
-        
-        if (winnerIsP1) {
-          await supabase
-            .from('rooms')
-            .update({ score_p1: (room.score_p1 || 0) + 1 })
-            .eq('id', room.id)
-        } else {
-          await supabase
-            .from('rooms')
-            .update({ score_p2: (room.score_p2 || 0) + 1 })
-            .eq('id', room.id)
-        }
-      }
-    }
-
-    updateScore()
-  }, [room, player])
 
   const handlePlayAgain = () => {
     navigate('/')

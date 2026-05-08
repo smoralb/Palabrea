@@ -185,10 +185,17 @@ export default function Game() {
     if (!confirmed) return
 
     const winner = playerSlot === 'player1' ? room.player2_name : room.player1_name
+    const winnerIsP1 = winner === room.player1_name
     
+    // Actualizar estado y score
     await supabase
       .from('rooms')
-      .update({ status: 'finished', winner })
+      .update({ 
+        status: 'finished', 
+        winner,
+        score_p1: winnerIsP1 ? (room.score_p1 || 0) + 1 : room.score_p1,
+        score_p2: !winnerIsP1 ? (room.score_p2 || 0) + 1 : room.score_p2
+      })
       .eq('id', room.id)
 
     navigate(`/gameover/${roomCode}?player=${searchParams.get('player')}`)
