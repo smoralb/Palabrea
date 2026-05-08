@@ -14,6 +14,11 @@ function generateCode() {
   return code
 }
 
+function clearSession() {
+  localStorage.removeItem('palabrea_session')
+  window.location.reload()
+}
+
 export default function Home() {
   const navigate = useNavigate()
   const { saveSession, room } = useGame()
@@ -217,6 +222,12 @@ export default function Home() {
                 className="w-full px-4 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-lg font-semibold"
               >
                 Unirse a sala
+              </button>
+              <button
+                onClick={clearSession}
+                className="w-full px-4 py-2 text-gray-500 hover:text-gray-300 text-sm"
+              >
+                Cerrar sesion
               </button>
             </div>
           ) : (
