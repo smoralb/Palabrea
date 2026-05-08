@@ -46,7 +46,6 @@ export default function GameOver() {
   }, [roomCode])
 
   const handlePlayAgain = async () => {
-    // Get the current player info from localStorage
     const stored = localStorage.getItem('palabrea_session')
     if (!stored) {
       navigate('/')
@@ -57,9 +56,8 @@ export default function GameOver() {
       const session = JSON.parse(stored)
       const playerName = session.playerName
       const newCode = generateCode()
-      const currentWord = getRandomWord()
+      const currentWord = await getRandomWord()
 
-      // Create a new room
       const { data, error } = await supabase
         .from('rooms')
         .insert({ 

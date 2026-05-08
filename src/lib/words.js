@@ -98,6 +98,26 @@ export const WORDS = [
   "voto", "voz", "vuelo", "ya", "yo", "zona", "zorro"
 ]
 
-export function getRandomWord() {
+export async function getRandomWord() {
+  // First try to get a valid word from API
+  let attempts = 0
+  const maxAttempts = 10
+  
+  while (attempts < maxAttempts) {
+    const word = WORDS[Math.floor(Math.random() * WORDS.length)]
+    
+    try {
+      const res = await fetch(`https://palabras.suincore.com/api/${word}`)
+      if (res.ok) {
+        return word
+      }
+    } catch (e) {
+      // If API fails, return random word
+      return word
+    }
+    
+    attempts++
+  }
+  
   return WORDS[Math.floor(Math.random() * WORDS.length)]
 }

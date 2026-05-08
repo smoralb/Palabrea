@@ -124,7 +124,7 @@ export default function Home() {
         return
       }
 
-      const currentWord = getRandomWord()
+      const currentWord = await getRandomWord()
       const { error: updateError } = await supabase
         .from('rooms')
         .update({
