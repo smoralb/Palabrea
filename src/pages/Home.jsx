@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { getRandomWord } from '../lib/words'
 import { useGame } from '../context/GameContext'
@@ -21,6 +21,7 @@ function clearSession() {
 
 export default function Home() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { saveSession, room } = useGame()
   
   const [playerName, setPlayerName] = useState('')
@@ -37,6 +38,20 @@ export default function Home() {
       navigate(`/game/${room.code}?player=player1`)
     }
   }, [room, navigate])
+
+  // Handle join from shared link
+  useEffect(() => {
+    const joinCode = searchParams.get('join')
+    if (joinCode === 'true' && !mode) {
+      // Find the room code from URL path
+      const pathParts = window.location.pathname.split('/')
+      const codeFromUrl = pathParts[pathParts.length - 1]
+      if (codeFromUrl && codeFromUrl.length === 6) {
+        setMode('join')
+        setRoomCodeInput(codeFromUrl)
+      }
+    }
+  }, [searchParams, mode])
 
   useEffect(() => {
     let channel
@@ -164,6 +179,26 @@ export default function Home() {
     navigator.clipboard.writeText(createdCode)
   }
 
+  const handleShare = async () => {
+    const roomLink = `${window.location.origin}/#/game/${createdCode}?join=true`
+    const shareData = {
+      title: 'Palabrea - Juego de palabras',
+      text: `Unete a mi partida en Palabrea! Usa este enlace: ${roomLink}`,
+      url: roomLink
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (e) {
+        // User cancelled or error
+      }
+    } else {
+      navigator.clipboard.writeText(roomLink)
+      alert('Enlace copiado!')
+    }
+  }
+
   if (waiting && createdCode) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
@@ -178,9 +213,16 @@ export default function Home() {
           
           <button
             onClick={handleCopyCode}
-            className="w-full mb-4 px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+            className="w-full mb-2 px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
           >
             Copiar codigo
+          </button>
+          
+          <button
+            onClick={handleShare}
+            className="w-full mb-4 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+          >
+            Compartir
           </button>
           
           <div className="flex items-center justify-center space-x-2 text-gray-400">
