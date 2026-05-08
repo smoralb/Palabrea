@@ -112,7 +112,7 @@ export default function Game() {
     }
   }, [room?.id, roomCode])
 
-  const validateWord = (word) => {
+  const validateWord = async (word) => {
     const cleanWord = removeAccents(word.toLowerCase())
     const cleanRef = removeAccents(currentWord.toLowerCase())
     
@@ -129,6 +129,16 @@ export default function Game() {
       return 'Esa palabra ya se usó en esta partida'
     }
     
+    try {
+      const res = await fetch(`https://palabras.suincore.com/api/${word}`)
+      if (!res.ok) {
+        return 'Palabra no encontrada en el diccionario'
+      }
+    } catch (e) {
+      // Si la API falla, permitir la palabra
+      console.warn('Error validando palabra:', e)
+    }
+    
     return null
   }
 
@@ -138,7 +148,7 @@ export default function Game() {
 
     setError('')
     
-    const validationError = validateWord(wordInput)
+    const validationError = await validateWord(wordInput)
     if (validationError) {
       setError(validationError)
       return
