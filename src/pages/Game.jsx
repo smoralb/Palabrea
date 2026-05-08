@@ -211,7 +211,7 @@ export default function Game() {
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col">
-      <div className="bg-gray-800 px-4 py-3 border-b border-gray-700">
+      <div className="bg-gray-800 px-4 py-3 border-b border-gray-700 flex-shrink-0">
         <div className="text-center">
           <span className="text-gray-400">Turno de: </span>
           <span className={`font-semibold ${isMyTurn ? 'text-green-400' : 'text-yellow-400'}`}>
@@ -220,7 +220,7 @@ export default function Game() {
         </div>
       </div>
 
-      <div className="px-4 py-4 bg-gray-800 border-b border-gray-700">
+      <div className="px-4 py-4 bg-gray-800 border-b border-gray-700 flex-shrink-0">
         <p className="text-center text-gray-400 text-sm mb-1">Palabra de referencia:</p>
         <p className="text-center text-2xl">
           <span className="font-bold text-yellow-400">{prefix}</span>
@@ -228,7 +228,7 @@ export default function Game() {
         </p>
       </div>
 
-      <div ref={chatRef} className="flex-1 overflow-y-auto p-4">
+      <div ref={chatRef} className="flex-1 overflow-y-auto p-4" style={{ flex: '1 1 auto', minHeight: '0' }}>
         {moves.map((move, idx) => (
           <ChatBubble
             key={move.id || idx}
@@ -240,7 +240,7 @@ export default function Game() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 bg-gray-800 border-t border-gray-700">
+      <form onSubmit={handleSubmit} className="p-4 bg-gray-800 border-t border-gray-700 flex-shrink-0">
         <div className="flex gap-2 mb-2">
           <input
             type="text"
