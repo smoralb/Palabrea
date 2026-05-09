@@ -44,7 +44,8 @@ export default function Home() {
     const joinCode = searchParams.get('join')
     if (joinCode === 'true' && !mode) {
       // Find the room code from URL path
-      const pathParts = window.location.pathname.split('/')
+      const hashPath = window.location.hash.replace('#', '')
+      const pathParts = hashPath.split('/')
       const codeFromUrl = pathParts[pathParts.length - 1]
       if (codeFromUrl && codeFromUrl.length === 6) {
         setMode('join')
@@ -183,7 +184,7 @@ export default function Home() {
     const roomLink = `${window.location.origin}/#/game/${createdCode}?join=true`
     const shareData = {
       title: 'Palabrea - Juego de palabras',
-      text: `Unete a mi partida en Palabrea! Usa este enlace: ${roomLink}`,
+      text: 'Unete a mi partida en Palabrea!',
       url: roomLink
     }
 
